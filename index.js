@@ -1,17 +1,33 @@
 const q = require('daskeyboard-applet');
 const axios = require('axios').default;
 const logger = q.logger;
+
+// TODO - Allow setting this via config if possible
 const pollingInterval = 30000;
 
 class DevOps extends q.DesktopApp {
   constructor() {
     super();
+    // TODO - Pass this in from config
     this.pollingInterval = pollingInterval;
     logger.info('DevOps loaded');
   }
 
+  /**
+   * this.config not available in constructor
+   * Handle configuration here. This overrides base method.
+   * Must return truthy value or throw error.
+   *
+   * @returns
+   * @memberof DevOps
+   */
   async applyConfig() {
     logger.info('Applying config');
+    // TODO - Pass colors in from config w/ defaults
+    // TODO - Allow overriding core server
+    // TODO - Allow enabling/disabling monitors
+    // TODO - Allow changing api version
+    // TODO - Get userId automatically from access token
     this.cfg = {
       emptyColor: '#000000',
       failureColor: '#FF0000',
@@ -46,15 +62,21 @@ class DevOps extends q.DesktopApp {
     const latestBuild = await this.getLatestBuild();
     const latestRelease = await this.getLatestRelease();
     const messages = [];
+    // TODO - Figure out how to not set ANY color, not black/off
     const points = [
       new q.Point(this.cfg.emptyColor),
       new q.Point(this.cfg.emptyColor),
       new q.Point(this.cfg.emptyColor)
     ];
+
+    // TODO - instead of just checking count of active PRs, check ones I haven't voted on
     if (prCount > 0) {
       points[0] = new q.Point(this.cfg.workingColor);
       messages.push(`${prCount} PRs awaiting review.`);
     }
+
+    // TODO - Define statuses/results as enum
+    // TODO - support checking more than one build
     if (latestBuild) {
       if (latestBuild.status === 'completed') {
         if (latestBuild.result === 'succeeded') {
@@ -72,11 +94,14 @@ class DevOps extends q.DesktopApp {
         messages.push(`Build in progress.`);
       }
     }
+
+    // TODO - Define statuses as enum
+    // TODO - support checking more than one release
     if (latestRelease) {
+      // TODO - support checking more than one environment
       const release = latestRelease.environments.find(
         env => env.name === this.cfg.releaseEnvironment
       );
-      logger.info(release.id);
       if (release) {
         if (release.status === 'notStarted') {
           points[2] = new q.Point(this.cfg.workingColor);
@@ -95,6 +120,7 @@ class DevOps extends q.DesktopApp {
       }
     }
     logger.info(`DevOps finished with: ${messages.join('')}`);
+    // TODO - figure out if these can be multiple signals instead of one
     return new q.Signal({
       points: [points],
       name: 'Azure DevOps',
@@ -103,6 +129,7 @@ class DevOps extends q.DesktopApp {
   }
 
   async getLatestRelease() {
+    // Get list of all releases, which only contains overall info, but limit to latest one
     const resp = await axios.get(
       `https://vsrm.${this.cfg.coreServer}/${this.cfg.organization}/${this.cfg.project}/_apis/release/releases`,
       {
@@ -114,6 +141,7 @@ class DevOps extends q.DesktopApp {
     );
 
     if (resp.status === 200 && resp.data.value.length > 0) {
+      // With that latest release, get the id, then request this specific release for info on each release environment
       const releaseId = resp.data.value[0].id;
       const release = await axios.get(
         `https://vsrm.${this.cfg.coreServer}/${this.cfg.organization}/${this.cfg.project}/_apis/release/releases/${releaseId}`
@@ -126,6 +154,7 @@ class DevOps extends q.DesktopApp {
   }
 
   async getLatestBuild() {
+    // List all builds, but limit to latest 1
     const resp = await axios.get(
       `https://${this.cfg.coreServer}/${this.cfg.organization}/${this.cfg.project}/_apis/build/builds`,
       {
