@@ -1,0 +1,99 @@
+{
+  "name": "devops-dasq",
+  "displayName": "Azure Devops Q Applet",
+  "readMeUrl": "README.md",
+  "readMeEndUserUrl": "README_ENDUSER.md",
+  "homePageUrl": "https://github.com/OfficerHalf/devops-dasq",
+  "licenseUrl": "https://www.isc.org/licenses/",
+  "issuesUrl": "https://github.com/OfficerHalf/devops-dasq/issues",
+  "authorUrl": "https://github.com/OfficerHalf/devops-dasq",
+  "authorName": "Nathan Smith",
+  "developerRepoUrl": "https://github.com/OfficerHalf/devops-dasq",
+  "changelogUrl": "CHANGELOG.md",
+  "icon": "assets/icon.png",
+  "publisher": "Nathan Smith",
+  "version": "0.0.1",
+  "description": "Das Keyboard Q applet for Azure Devops",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nathan Smith",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "daskeyboard-applet": "^2.11.4"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "engines": {
+    "das-keyboard-q": "3.2.6"
+  },
+  "qConfig": {
+    "geometry": {
+      "width": 3,
+      "height": 1
+    },
+    "questions": [
+      {
+        "key": "accessToken",
+        "label": "Personal Access Token",
+        "required": true,
+        "order": 1,
+        "controlType": "textbox"
+      },
+      {
+        "key": "organization",
+        "label": "Organization",
+        "required": true,
+        "order": 2,
+        "controlType": "textbox"
+      },
+      {
+        "key": "project",
+        "label": "Project",
+        "required": true,
+        "order": 3,
+        "controlType": "textbox"
+      },
+      {
+        "key": "repository",
+        "label": "Repository",
+        "required": true,
+        "order": 4,
+        "controlType": "textbox"
+      },
+      {
+        "key": "userId",
+        "label": "User GUID",
+        "required": true,
+        "order": 5,
+        "controlType": "textbox"
+      },
+      {
+        "key": "buildDefinitions",
+        "label": "Build Definition Ids",
+        "placeholder": "Comma delimited ids",
+        "required": true,
+        "order": 6,
+        "controlType": "textbox"
+      },
+      {
+        "key": "releaseDefinition",
+        "label": "Release Definition Id",
+        "placeholder": "One integer please",
+        "required": true,
+        "order": 7,
+        "controlType": "textbox"
+      },
+      {
+        "key": "releaseEnvironment",
+        "label": "Release Environment Name",
+        "required": true,
+        "order": 8,
+        "controlType": "textbox"
+      }
+    ]
+  }
+}
